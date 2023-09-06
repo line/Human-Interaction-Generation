@@ -1,0 +1,6 @@
+[submodule "preprocess/Extract3Dpose"]
+	path = preprocess/Extract3Dpose
+	url = https://github.com/mikittt/ROMP.git
+[submodule "preprocess/Preprocess3Dpose"]
+	path = preprocess/Preprocess3Dpose
+	url = https://github.com/mikittt/HumanML3D
