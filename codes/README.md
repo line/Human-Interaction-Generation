@@ -1,14 +1,17 @@
+# Generating role-aware interactions from texts
+
 ## Dataset and Pretrained Weights
 <details>
-<summary>Prepare pretrained weights and data</summary>
+<summary>Preparing pretrained weights and data</summary>
 
 If you want to train models, please preprocess dataset in `../preprocess` at first.  
-`data/NTURGBD_multi` already includes train/val/test split files and `test_active_anns.json`, which is small set annotations regarding an actor and a receiver.
+`data/NTURGBD_multi` already includes train/val/test split files and `test_active_anns.json`, which contains a small set of annotations regarding an actor and a receiver.
 Please move all files in `NTURGBD_multi`, which is prepared in `../preprocess`, to `data/NTURGBD_multi`.  
 
-Please download [pretrained weights](https://drive.google.com/drive/folders/1PcZf8T8g24olUER77WH4mA88Kc4_rhHI?usp=drive_link).  
+Please download the [pretrained weights](https://drive.google.com/drive/folders/1PcZf8T8g24olUER77WH4mA88Kc4_rhHI?usp=drive_link).  
 If you want to train an interaction generation model using a pretrained single motion generation model, please download MotionDiffuse model from [here](https://github.com/mingyuan-zhang/MotionDiffuse/blob/main/text2motion/install.md).   
-The whole directory is as follows.
+
+The directory structure should appear as follows:
 
 ```
 codes
@@ -54,22 +57,18 @@ pip install -r requirements.txt
 
 ## Training interaction generation model
 
-(1-1)  
-The NTURGBD dataset contains only interaction labels and does not include annotations for individual roles. We introduced PIT to train a label-based role-aware interaction generation model at first.  
+To train role-aware interaction generation from texts on the NTURGBD dataset, we follow a three-step process.  
 
-(1-2)  
-The obtained roles can be identified using a small amount of annotations regarding an actor and a receiver.  
-After identifying the roles, you can provide pseudo labels regarding which motion is an actor or a receiver for all training data.  
-
-(1-3)  
-By using the above pseudo labels for individual roles, you can train a model that can generate role-aware interactions from texts.  
+(1-1) First, we introduced PIT to train a label-based role-aware interaction generation model because the NTURGBD dataset contains only interaction labels and does not include annotations for individual roles.  
+(1-2) Second, we identify the roles learned by the model and assign pseudo labels for roles to the training data.  
+(1-3) Finally, we train a model that can generate role-aware interactions from texts using the above pseudo labels for roles.  
 
 
 <details>
 <summary>(1-1) Training label-based role-aware interaction generation model (PIT)</summary>
 
 ```
-CUDA_VISIBLE_DEVICES=0,1,2,3,4 python -u tools/train.py \
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -u tools/train.py \
     --name pit \
     --batch_size 160 \
     --times 30 \
@@ -108,11 +107,11 @@ python -u tools/label_data.py \
 <details>
 <summary>(1-3) Training models for role-aware interaction generation from texts</summary>
 
-If you want to use a pretrained single motion generation model, please add flag `--pretrained`.
+If you want to use a pretrained single motion generation model for weight initialization, please add flag `--pretrained`.
 
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -u tools/train.py \
-    --name interaction_pretrained \
+    --name interaction \
     --batch_size 120 \
     --times 200 \
     --num_epochs 50 \
@@ -173,23 +172,23 @@ CUDA_VISIBLE_DEVICES=0 python -u tools/evaluation.py \
 <summary>Visualizing generated motions</summary>
 
 Run the following command.  
---result_path specifies the save directory.
+The `--result_path` option specifies the save directory.
 
 ```
-## inference for role-aware interaction generation from texts
+## inference command for role-aware interaction generation from texts
 CUDA_VISIBLE_DEVICES=0 python -u tools/visualization.py \
     --opt_path checkpoints/ntu_mul/interaction_pretrained/opt.txt \
-    --text_category 0\
+    --text_category 1\
     --result_path vis_data/gen_interaction \
     --which_epoch latest \
     --gpu_id 0 \
     --interaction    \
     --motion_length 60 
 
-## inference for label-based role-aware interaction generation model (PIT)
+## inference command for label-based role-aware interaction generation model (PIT)
 CUDA_VISIBLE_DEVICES=0 python -u tools/visualization.py \
     --opt_path checkpoints/ntu_mul/pit/opt.txt \
-    --text_category 0\
+    --text_category 1\
     --result_path vis_data/pit \
     --which_epoch latest \
     --gpu_id 0 \
@@ -198,7 +197,7 @@ CUDA_VISIBLE_DEVICES=0 python -u tools/visualization.py \
     --cap_id
 ```
 
-If you want to render the generated sequence with the SMPL human model, please go to `./joints2smpl` and visualize it by using the npy file saved in --result_path.
+If you want to render the generated sequence with the SMPL human model, please go to `./joints2smpl` and visualize it by using the npy file saved in `--result_path`.
 
 </details>
 
