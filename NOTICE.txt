@@ -3,7 +3,8 @@
 This product from LINE Corporation contains the open source software detailed below. Please refer to the indicated open source licenses (as are included following this notice) for the terms and conditions of their use.
 
 
-Please be informed that LINE Corporation product may contain open source software listed in to tables below.
+Please be informed that LINE Corporation product may contain open source software listed in tables below.
+Licences can be found under the respective software repositories.
 
 MotionDiffuse (S-Lab License 1.0)
 https://github.com/mingyuan-zhang/MotionDiffuse
