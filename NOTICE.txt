@@ -11,3 +11,6 @@ https://github.com/EricGuo5513/HumanML3D
 
 ROMP (Apache License 2.0)
 https://github.com/Arthur151/ROMP
+
+joints2smpl
+https://github.com/wangsen1312/joints2smpl
